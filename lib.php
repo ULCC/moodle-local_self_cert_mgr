@@ -22,7 +22,7 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-function self_cert_mgr_extension_upload_myprofile_navigation(core_user\output\myprofile\tree $tree, $user, $iscurrentuser, $course){
+function local_self_cert_mgr_myprofile_navigation(core_user\output\myprofile\tree $tree, $user, $iscurrentuser, $course){
 
     if(!$iscurrentuser){
         return false;
@@ -57,10 +57,10 @@ function self_cert_mgr_extension_upload_myprofile_navigation(core_user\output\my
  * @return int
  * @throws dml_exception
  */
-function self_cert_mgr_current_self_cert_count($userid) {
+function local_self_cert_mgr_current_self_cert_count($userid) {
     global $DB;
 
-    $enrol_date = self_cert_mgr_get_user_custom_profile_field_value('enrol_date', $userid);
+    $enrol_date = local_self_cert_mgr_get_user_custom_profile_field_value('enrol_date', $userid);
 
     // translate date into timestamp
     $enrol_date = strtotime($enrol_date);
@@ -88,18 +88,18 @@ function self_cert_mgr_current_self_cert_count($userid) {
  * @return false|int|mixed|object|string
  * @throws dml_exception
  */
-function self_cert_mgr_no_self_cert_available($userid) {
+function local_self_cert_mgr_no_self_cert_available($userid) {
 
     // get enrol date from user's custom profile field
-    $enrol_date = self_cert_mgr_get_user_custom_profile_field_value('enrol_date', $userid);
+    $enrol_date = local_self_cert_mgr_get_user_custom_profile_field_value('enrol_date', $userid);
     $maxselfcert = get_config('block_rhb', 'selfcertmax');
 
     //has user unlimited extensions? skip
-    $unlimitedextensions = self_cert_mgr_get_user_custom_profile_field_value('exte', $userid);
+    $unlimitedextensions = local_self_cert_mgr_get_user_custom_profile_field_value('exte', $userid);
 
     if (!($unlimitedextensions && $unlimitedextensions == 'EXTE')  && $maxselfcert && $enrol_date) {
         // get a number of self cert left to use
-       return $noleft = $maxselfcert - self_cert_mgr_current_self_cert_count($enrol_date);
+       return $noleft = $maxselfcert - local_self_cert_mgr_current_self_cert_count($enrol_date);
     }
 
     return false;
@@ -114,7 +114,7 @@ function self_cert_mgr_no_self_cert_available($userid) {
  * @return mixed
  * @throws dml_exception
  */
-function self_cert_mgr_get_user_custom_profile_field_value($fieldname, $userid) {
+function local_self_cert_mgr_get_user_custom_profile_field_value($fieldname, $userid) {
     global $DB;
 
     $params = array('fieldname' => $fieldname,
