@@ -59,6 +59,10 @@ if (!empty($userid)) {
     $maxselfcert = get_config('block_rhb', 'selfcertmax');
     $selfcert_available = local_self_cert_mgr_no_self_cert_available($userid);
     $selfcert_used = (empty($selfcert_available) ? '' : $maxselfcert - $selfcert_available);
+    if ($dbman->table_exists('local_user_info_ext')) {
+        $candno = $DB->get_field_sql("SELECT value FROM {local_user_info_ext} WHERE type = 'candno' AND userid = :userid LIMIT 1", ['userid' => $userid]);
+        $sprno = $DB->get_field_sql("SELECT value FROM {local_user_info_ext} WHERE type = 'spr' AND userid = :userid LIMIT 1", ['userid' => $userid]);
+    }
     $html = '
         <div class="container warppercontent">
             <div class="row">
@@ -71,10 +75,10 @@ if (!empty($userid)) {
                     <span><b>Student Name:</b></span> <span>'. $user->firstname . ' ' . $user->lastname .'</span>
                 </div>
                 <div class="col-sm-4">
-                    <span><b>Candidate Number:</b></span> <span>'. $DB->get_field_sql("SELECT value FROM {local_user_info_ext} WHERE type = 'spr' AND userid = :userid LIMIT 1", ['userid' => $userid]) .'</span>
+                    <span><b>Candidate Number:</b></span> <span>'. (empty($candno) ? '' : $candno) .'</span>
                 </div>
                 <div class="col-sm-4">
-                    <span><b>SPR Number:</b></span> <span>'. $DB->get_field_sql("SELECT value FROM {local_user_info_ext} WHERE type = 'candno' AND userid = :userid LIMIT 1", ['userid' => $userid]) .'</span>
+                    <span><b>SPR Number:</b></span> <span>'. (empty($sprno) ? '' : $sprno) .'</span>
                 </div>
             </div>
             <div class="row">

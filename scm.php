@@ -132,12 +132,14 @@ if(!empty($txtsearch)) {
         $sql = "SELECT DISTINCT userid FROM {local_user_info_ext}
                     WHERE type = '$selected_extensiontype'
                         AND value LIKE '%$txtsearch%'
+                    ORDER BY userid
                 ";
         $userids = $DB->get_records_sql($sql);
     }
     else {
-        $sql = "SELECT id FROM {user}
+        $sql = "SELECT id, $selected_extensiontype FROM {user}
                     WHERE $selected_extensiontype LIKE '%$txtsearch%'
+                    ORDER BY $selected_extensiontype
                 ";
         $userids = $DB->get_records_sql($sql);
     }

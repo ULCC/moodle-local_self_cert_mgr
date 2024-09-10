@@ -27,6 +27,8 @@ require_once((__DIR__).'/../../config.php');
 
 global $CFG, $DB, $USER, $PAGE;
 
+use mod_coursework\models\coursework;
+
 $context = context_system::instance();
 $PAGE->set_context($context);
 
@@ -49,7 +51,29 @@ if (confirm_sesskey()) {
 
         case 'removeselfcert':
             $selfcertid = required_param('selfcertid', PARAM_INT);
+            $record = $DB->get_record('coursework_mitigations', ['id' => $selfcertid]);
             $DB->delete_records('coursework_mitigations', ['id' => $selfcertid]);
+
+            $coursework = coursework::find($record->courseworkid);
+
+            $params = array(
+                'context' => \context_module::instance($coursework->get_course_module()->id),
+                'courseid' => $coursework->course,
+                'objectid' => $record->id,
+                'other' => array(
+                    'courseworkid' => $coursework->id,
+                    'cmid' => $coursework->get_course_module()->id,
+                    'mittype' => $record->type,
+                    'extensiontime' => null,
+                    'allocatableid' => $record->allocatableid,
+                    'selfcert' => $record->selfcert
+                )
+            );
+
+            // log the fact mitigation was removed
+            $event = \mod_coursework\event\coursework_mitigation_removed::create($params);
+            $event->trigger();
+
             echo 'success';
             break;
     }
