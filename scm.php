@@ -101,19 +101,15 @@ $html = '
                 </form>
             </div>
         </div>
-        <div class="row">
-            <div class="col-sm-12">
-                <div class="wrappertable">
-                    [SEARCH-RESULT]
-                </div>
-            </div>
-        </div>
+        [WRAPPER-RESULT]
     </div>
     <style type="text/css">
         .warppercontent { min-height: 600px; }
         .wrappersearchfield { border: 1px solid #000; padding: 30px 0; }
         .wrappersearchfield + div { margin-top: 40px; border: 1px solid; padding: 30px 0; }
         .tableresult th, .tableresult td { padding: 7px 20px; }
+        input[name=sbsearch] { padding: 4px 8px; border-radius: 6px; border: 1px solid #8f959e; }
+        input[name=txtsearch] { padding: 5px 3px; border-radius: 6px; border: 1px solid #8f959e; }
     </style>
 ';
 
@@ -121,6 +117,15 @@ $txtsearch = optional_param('txtsearch', '', PARAM_TEXT);
 if(!empty($txtsearch)) {
     $html = str_replace('[SEARCH-VALUE]', $txtsearch, $html);
 
+    $html_wrapper_result =
+        '<div class="row">
+            <div class="col-sm-12">
+                <div class="wrappertable">
+                    [SEARCH-RESULT]
+                </div>
+            </div>
+        </div>';
+    $html = str_replace('[WRAPPER-RESULT]', $html_wrapper_result, $html);
 
     if (in_array($selected_extensiontype, $extensiontypes)) {
         $sql = "SELECT userid FROM {local_user_info_ext}
@@ -182,9 +187,6 @@ if(!empty($txtsearch)) {
         $html_results .= '</tbody></table>';
         $html = str_replace('[SEARCH-RESULT]', $html_results, $html);
     }
-}
-else {
-    $html = str_replace('[SEARCH-VALUE]', '', $html);
 }
 
 echo $OUTPUT->header();
