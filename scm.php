@@ -113,13 +113,14 @@ $html = '
     </style>
 ';
 
-$txtsearch = optional_param('txtsearch', '', PARAM_TEXT);
+$txtsearch = trim(optional_param('txtsearch', '', PARAM_TEXT));
 if(!empty($txtsearch)) {
     $html = str_replace('[SEARCH-VALUE]', $txtsearch, $html);
 
     $html_wrapper_result =
         '<div class="row">
             <div class="col-sm-12">
+                <p>'. $title .'</p>
                 <div class="wrappertable">
                     [SEARCH-RESULT]
                 </div>
@@ -128,8 +129,8 @@ if(!empty($txtsearch)) {
     $html = str_replace('[WRAPPER-RESULT]', $html_wrapper_result, $html);
 
     if (in_array($selected_extensiontype, $extensiontypes)) {
-        $sql = "SELECT userid FROM {local_user_info_ext}
-                    WHERE type = $selected_extensiontype
+        $sql = "SELECT DISTINCT userid FROM {local_user_info_ext}
+                    WHERE type = '$selected_extensiontype'
                         AND value LIKE '%$txtsearch%'
                 ";
         $userids = $DB->get_records_sql($sql);
@@ -160,18 +161,8 @@ if(!empty($txtsearch)) {
                 $html_results .= '<td data-userid="'. $user->id .'">'. $user->firstname . ' ' . $user->lastname .'</td>';
 
                 if ($dbman->table_exists('local_user_info_ext')) {
-                    $sql = 'SELECT spr, candno FROM {local_user_info_ext}
-                            WHERE userid = :userid
-                            LIMIT 1';
-                    $record = $DB->get_record_sql($sql);
-                    if (!empty($record)) {
-                        $html_results .= '<td>'. $record->spr .'</td>';
-                        $html_results .= '<td>'. $record->candno .'</td>';
-                    }
-                    else {
-                        $html_results .= '<td></td>';
-                        $html_results .= '<td></td>';
-                    }
+                    $html_results .= '<td>'. $DB->get_field_sql("SELECT value FROM {local_user_info_ext} WHERE type = 'spr' AND userid = :userid LIMIT 1", ['userid' => $userid]) .'</td>';
+                    $html_results .= '<td>'. $DB->get_field_sql("SELECT value FROM {local_user_info_ext} WHERE type = 'candno' AND userid = :userid LIMIT 1", ['userid' => $userid]) .'</td>';
                 }
                 else {
                     $html_results .= '<td></td>';
@@ -187,6 +178,10 @@ if(!empty($txtsearch)) {
         $html_results .= '</tbody></table>';
         $html = str_replace('[SEARCH-RESULT]', $html_results, $html);
     }
+}
+else {
+    $html = str_replace('[WRAPPER-RESULT]', '', $html);
+    $html = str_replace('[SEARCH-VALUE]', '', $html);
 }
 
 echo $OUTPUT->header();

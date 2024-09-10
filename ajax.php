@@ -27,15 +27,30 @@ require_once((__DIR__).'/../../config.php');
 
 global $CFG, $DB, $USER, $PAGE;
 
+$context = context_system::instance();
+$PAGE->set_context($context);
+
 require_login();
 
-$action = optional_param('action', '', PARAM_ALPHAEXT);
+if(!has_capability('local/self_cert_mgr:edit', $context)) {
+    echo $OUTPUT->header();
+
+    echo "<p>You don't have the permission to view this page.</p>";
+
+    echo $OUTPUT->footer();
+    exit;
+}
+
+$action = required_param('action', PARAM_TEXT);
 
 if (confirm_sesskey()) {
 
     switch ($action) {
 
         case 'removeselfcert':
+            $selfcertid = required_param('selfcertid', PARAM_INT);
+            $DB->delete_records('coursework_mitigations', ['id' => $selfcertid]);
+            echo 'success';
             break;
     }
     exit;

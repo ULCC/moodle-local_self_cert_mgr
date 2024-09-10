@@ -60,10 +60,10 @@ function local_self_cert_mgr_myprofile_navigation(core_user\output\myprofile\tre
 function local_self_cert_mgr_current_self_cert_count($userid) {
     global $DB;
 
-    $enrol_date = local_self_cert_mgr_get_user_custom_profile_field_value('enrol_date', $userid);
+    // $enrol_date = local_self_cert_mgr_get_user_custom_profile_field_value('enrol_date', $userid);
 
     // translate date into timestamp
-    $enrol_date = strtotime($enrol_date);
+    // $enrol_date = strtotime($enrol_date);
 
     $params = array('userid'=>$userid,
                     'enroldate'=>$enrol_date);
@@ -72,8 +72,8 @@ function local_self_cert_mgr_current_self_cert_count($userid) {
             FROM {coursework_mitigations}
             WHERE type = 'extension'
             AND selfcert = 1
-            AND allocatableid = :userid
-            AND timecreated > :enroldate";
+            AND allocatableid = :userid";
+            #AND timecreated > :enroldate";
 
     $count = $DB->count_records_sql($sql, $params);
 
@@ -91,15 +91,15 @@ function local_self_cert_mgr_current_self_cert_count($userid) {
 function local_self_cert_mgr_no_self_cert_available($userid) {
 
     // get enrol date from user's custom profile field
-    $enrol_date = local_self_cert_mgr_get_user_custom_profile_field_value('enrol_date', $userid);
+    #$enrol_date = local_self_cert_mgr_get_user_custom_profile_field_value('enrol_date', $userid);
     $maxselfcert = get_config('block_rhb', 'selfcertmax');
 
     //has user unlimited extensions? skip
     $unlimitedextensions = local_self_cert_mgr_get_user_custom_profile_field_value('exte', $userid);
 
-    if (!($unlimitedextensions && $unlimitedextensions == 'EXTE')  && $maxselfcert && $enrol_date) {
+    if (!($unlimitedextensions && $unlimitedextensions == 'EXTE')  && $maxselfcert) {
         // get a number of self cert left to use
-       return $noleft = $maxselfcert - local_self_cert_mgr_current_self_cert_count($enrol_date);
+       return $noleft = $maxselfcert - local_self_cert_mgr_current_self_cert_count($userid);
     }
 
     return false;
