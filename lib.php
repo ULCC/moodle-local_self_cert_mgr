@@ -60,10 +60,10 @@ function local_self_cert_mgr_myprofile_navigation(core_user\output\myprofile\tre
 function local_self_cert_mgr_current_self_cert_count($userid) {
     global $DB;
 
-    // $enrol_date = local_self_cert_mgr_get_user_custom_profile_field_value('enrol_date', $userid);
+    $enrol_date = local_self_cert_mgr_get_user_custom_profile_field_value('enrol_date', $userid);
 
     // translate date into timestamp
-    // $enrol_date = strtotime($enrol_date);
+    $enrol_date = strtotime($enrol_date);
 
     $params = array('userid'=>$userid,
                     'enroldate'=>$enrol_date);
