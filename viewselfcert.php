@@ -194,7 +194,7 @@ if (!empty($userid)) {
                 $html_records .= '<tr>';
                 $html_records .= '<td>'. $DB->get_field('course', 'fullname', ['id' => $coursework->course]) .'</td>';
                 $html_records .= '<td>'. $coursework->name .'</td>';
-                $html_records .= '<td>'. date('d/m/Y', $submission->timesubmitted) .'</td>';
+                $html_records .= '<td>'. (empty($submission) ? '' : date('d/m/Y', $submission->timesubmitted)) .'</td>';
                 $html_records .= '<td>'. date('d/m/Y', $record->timecreated) .'</td>';
                 $html_records .= '<td><a href="javascript:;" data-selfcertid="'. $record->id .'" class="button_remove"><i class="icon fa fa-remove fa-fw " aria-hidden="true"></i></a></td>';
                 $html_records .= '</tr>';
