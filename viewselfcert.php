@@ -58,7 +58,7 @@ if (!empty($userid)) {
     $user = $DB->get_record('user', ['id' => $userid], 'id, firstname, lastname');
     $maxselfcert = get_config('block_rhb', 'selfcertmax');
     $selfcert_available = local_self_cert_mgr_no_self_cert_available($userid);
-    $selfcert_used = (empty($selfcert_available) ? '' : $maxselfcert - $selfcert_available);
+    $selfcert_used = ($selfcert_available === false ? '' : $maxselfcert - $selfcert_available);
     if ($dbman->table_exists('local_user_info_ext')) {
         $candno = $DB->get_field_sql("SELECT value FROM {local_user_info_ext} WHERE type = 'candno' AND userid = :userid LIMIT 1", ['userid' => $userid]);
         $sprno = $DB->get_field_sql("SELECT value FROM {local_user_info_ext} WHERE type = 'spr' AND userid = :userid LIMIT 1", ['userid' => $userid]);
@@ -93,7 +93,7 @@ if (!empty($userid)) {
             </div>
             <div class="row">
                 <div class="col-sm-12">
-                    <p><span><b>Total Left: </b></span> <span>'. (empty($selfcert_available) ? '' : $selfcert_available) .'</span></p>
+                    <p><span><b>Total Left: </b></span> <span>'. ($selfcert_available === false ? '' : $selfcert_available) .'</span></p>
                 </div>
             </div>
             [WRAPPER-RESULT]
