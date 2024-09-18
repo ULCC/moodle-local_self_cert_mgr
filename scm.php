@@ -130,19 +130,22 @@ if(!empty($txtsearch)) {
 
     if (in_array($selected_extensiontype, $extensiontypes)) {
         $sql = "SELECT DISTINCT userid FROM {local_user_info_ext}
-                    WHERE type = '$selected_extensiontype'
-                        AND value LIKE '%$txtsearch%'
+                    WHERE type = :type
+                        AND value LIKE :txtsearch
                     ORDER BY userid
                 ";
-        $userids = $DB->get_records_sql($sql);
+        $txtsearch = '%'. $DB->sql_like_escape($txtsearch) .'%';
+        $userids = $DB->get_records_sql($sql, ['type' => $selected_extensiontype, 'txtsearch' => $txtsearch]);
     }
     else {
-        $sql = "SELECT id, $selected_extensiontype FROM {user}
-                    WHERE $selected_extensiontype LIKE '%$txtsearch%'
-                    ORDER BY $selected_extensiontype
+        $sql = "SELECT id FROM {user}
+                    WHERE $selected_extensiontype LIKE :txtsearch
+                    ORDER BY firstname, lastname
                 ";
-        $userids = $DB->get_records_sql($sql);
+        $txtsearch = '%'. $DB->sql_like_escape($txtsearch) .'%';
+        $userids = $DB->get_records_sql($sql, ['txtsearch' => $txtsearch]);
     }
+
 
     if (empty($userids)) {
         $html = str_replace('[SEARCH-RESULT]', '<p>No records found</p>', $html);
