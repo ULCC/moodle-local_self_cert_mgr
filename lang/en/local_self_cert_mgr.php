@@ -29,4 +29,3 @@ $string['self_cert_mgr:edit']  = "view/edit the 'Self Certified Extension Manage
 $string['candno'] = 'Candidate number';
 $string['spr'] = 'SPR';
 $string['unlimited']    =   'Unlimited';
-!h3b
