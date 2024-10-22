@@ -56,9 +56,21 @@ $userid = required_param('userid', PARAM_INT);
 
 if (!empty($userid)) {
     $user = $DB->get_record('user', ['id' => $userid], 'id, firstname, lastname');
-    $maxselfcert = get_config('block_rhb', 'selfcertmax');
-    $selfcert_available = local_self_cert_mgr_no_self_cert_available($userid);
-    $selfcert_used = ($selfcert_available === false ? '' : $maxselfcert - $selfcert_available);
+    $maxselfcert        =   local_self_cert_mgr_max_self_cert($userid);
+    $selfcert_used      =   local_self_cert_mgr_current_self_cert_count($userid);
+
+    if ($maxselfcert ==  -1)   {
+        $maxselfcert    =   get_string('unlimited','local_self_cert_mgr');
+        $selfcert_available = get_string('unlimited','local_self_cert_mgr');;
+    }   else {
+
+        $selfcert_available =  $maxselfcert - $selfcert_used;
+
+    }
+
+
+
+
     if ($dbman->table_exists('local_user_info_ext')) {
         $candno = $DB->get_field_sql("SELECT value FROM {local_user_info_ext} WHERE type = 'candno' AND userid = :userid LIMIT 1", ['userid' => $userid]);
         $sprno = $DB->get_field_sql("SELECT value FROM {local_user_info_ext} WHERE type = 'spr' AND userid = :userid LIMIT 1", ['userid' => $userid]);

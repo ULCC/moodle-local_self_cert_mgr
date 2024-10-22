@@ -129,3 +129,19 @@ function local_self_cert_mgr_get_user_custom_profile_field_value($fieldname, $us
 
     return $value;
 }
+
+
+
+function local_self_cert_mgr_max_self_cert($userid)   {
+
+    //has user unlimited extensions? skip
+    $unlimitedextensions = local_self_cert_mgr_get_user_custom_profile_field_value('exte', $userid);
+
+    if ($unlimitedextensions && $unlimitedextensions == 'EXTE') {
+        $maxselfcert    =   -1;
+    }   else    {
+        $maxselfcert = get_config('block_rhb', 'selfcertmax');
+    }
+
+    return $maxselfcert;
+}
