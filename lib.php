@@ -72,8 +72,8 @@ function local_self_cert_mgr_current_self_cert_count($userid) {
             FROM {coursework_mitigations}
             WHERE type = 'extension'
             AND selfcert = 1
-            AND allocatableid = :userid";
-            #AND timecreated > :enroldate";
+            AND allocatableid = :userid
+            AND timecreated > :enroldate";
 
     $count = $DB->count_records_sql($sql, $params);
 
