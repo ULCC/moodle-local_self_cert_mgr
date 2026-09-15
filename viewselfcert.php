@@ -202,6 +202,8 @@ if (!empty($userid)) {
             $html_records = '';
             foreach ($records as $record) {
                 $coursework = coursework::find($record->courseworkid);
+
+                if (empty($coursework))     continue;
                 $submission = $coursework->get_user_submission(user::find($userid));
                 $html_records .= '<tr>';
                 $html_records .= '<td>'. $DB->get_field('course', 'fullname', ['id' => $coursework->course]) .'</td>';
